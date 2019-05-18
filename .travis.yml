@@ -6,7 +6,7 @@ before_install:
   - docker build -t aleksgorbenko/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run aleksgorbenko/react-test test -- --coverage
+  - docker run aleksgorbenko/react-test test
 
 after_success:
   - docker build -t aleksgorbenko/multi-client ./client
