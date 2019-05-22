@@ -2,9 +2,14 @@ version: "3"
 services:
   postgres:
     image: "postgres:latest"
+    networks:
+    - "internal"
 
   redis:
     image: "redis:latest"
+    networks:
+    - "internal"
+
   nginx:
     restart: always
     build:
@@ -12,6 +17,9 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "3050:80"
+    networks:
+    - "internal"
+
   api:
     build:
       context: ./server
@@ -27,6 +35,8 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
+    networks:
+    - "internal"
 
   worker:
     build:
@@ -38,6 +48,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    networks:
+    - "internal"
 
   client:
     build:
@@ -46,3 +58,8 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
+    networks:
+    - "internal"
+
+networks:
+  internal:
