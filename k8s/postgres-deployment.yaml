@@ -12,6 +12,11 @@ spec:
       labels:
         component: postgres
     spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            # name taken from metadata in database-persistent-volume-claim.yaml
+            claimName: database-persistent-volume-claim
       containers:
         - name: postgres
           image: postgres
@@ -21,3 +26,13 @@ spec:
           #     cpu: "500m"
           ports:
             - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage # has to match to volumes/name above
+              mountPath: /var/lib/postgresql/data # this is where data will be stored
+              subPath: postgres # this will be top level folder in volume follwed by mountPath
+          env:
+            - name: PGPASSWORD # will override the default password for postgres image
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
